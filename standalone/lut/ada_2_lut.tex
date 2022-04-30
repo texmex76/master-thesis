@@ -1,0 +1,44 @@
+\documentclass{standalone}
+\usepackage{textcomp}
+\usepackage{pgfplots}
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+    %title={Real data},
+    width=0.8\textwidth,
+    height=0.5\textwidth,
+    xlabel={Number of lut networks},
+    ylabel={Accuracy},
+    %xmin=1, xmax=17,
+    %ymin=0.44, ymax=1.1,
+    xtick={2,4,8,16,32,64,128,256,512,1024},
+    %ytick={0.5,0.6,0.7,0.8,0.9,1.00},
+    legend pos=north west,
+    ymajorgrids=true,
+    grid style=dashed,
+    xmode=log,
+    log ticks with fixed point,
+]
+
+\addplot[
+    color=blue,
+    mark=*,
+    ]
+    coordinates {
+        (2,0.67)(4,0.71)(8,0.75)(16,0.76)(32,0.76)(64,0.78)(128,0.79)(256,0.82)(512,0.87)(1024,0.89)
+    };
+    \addlegendentry{Train}
+
+\addplot[
+    color=red,
+    mark=square,
+    dashed,
+    ]
+    coordinates {
+        (2,0.69)(4,0.73)(8,0.75)(16,0.78)(32,0.77)(64,0.79)(128,0.80)(256,0.83)(512,0.87)(1024,0.89)
+    };
+    \addlegendentry{Test}
+
+\end{axis}
+\end{tikzpicture}
+\end{document}

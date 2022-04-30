@@ -1,0 +1,17 @@
+digraph "aig2.aag" {
+"It is sunny"[shape=box];
+I0[shape=triangle,color=blue];
+"It is sunny"->I0[arrowhead=none];
+"Is is hot"[shape=box];
+I1[shape=triangle,color=blue];
+"Is is hot"->I1[arrowhead=none];
+"Have to mow the lawn"[shape=box];
+I2[shape=triangle,color=blue];
+"Have to mow the lawn"->I2[arrowhead=none];
+"Want to go to the pool"->"It is sunny"[arrowhead=none];
+"Want to go to the pool"->"Is is hot"[arrowhead=none];
+"Going to the pool"->"Have to mow the lawn"[arrowhead=dot];
+"Going to the pool"->"Want to go to the pool"[arrowhead=none];
+O0[shape=triangle,color=blue];
+O0 -> "Going to the pool"[arrowhead=none];
+}

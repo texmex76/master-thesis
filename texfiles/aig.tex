@@ -1,0 +1,45 @@
+\section{And-inverter graphs (AIGs)}
+
+\subsection{Introduction}
+We will now consider another scheme of building a \enquote{network} without the backpropagation algorithm. Let us start by introducing another predictive system that looks like a network and works with binary values. Consider binary variable $\mathsf{2}$. For consistency, which will become apparent later on, we will use numeric variables. It can either be true or false. Introducing another variable $\mathsf{4}$, we can perform a logical operation on $\mathsf{2}$ and $\mathsf{4}$, similar to how we can perform a mathematical operation with two real numbers (e.g., adding, subtracting, dividing them, etc.). Logical operators include AND ($\wedge$), OR ($\vee$), IMPLICATION ($\Rightarrow$), XOR ($\otimes$) and so on. If we compute
+
+\begin{align} \label{eq:ceqaandb}
+    \mathsf{6} = \mathsf{2} \wedge \mathsf{4},
+  \end{align}where $\mathsf{6}$ is another binary variable, we can visualize this using a graph, visible in Figure~\ref{fig:aig1}. First let us consider Figure~\ref{fig:aig1-text}. We interpret variables $\mathsf{2}$ and $\mathsf{r}$ as \textit{inputs} and thus draw them using boxes and label them additionally using triangle nodes. Variable $\mathsf{6}$ in Equation~\ref{eq:ceqaandb} becomes and \textit{and-node}, i.e., it is the result of performing AND on $\mathsf{2}$ and $\mathsf{4}$, and we denote it using a circular node. Since variable $\mathsf{6}$ is already the output of equation~\ref{eq:ceqaandb}, we mark using a triangle node. We could already imagine Equation~\ref{eq:ceqaandb} being a predictive system. Suppose we want to build a predictive system that forecasts whether or not teenage boy \enquote{Hans} will refresh himself at the family's swimming pool. We observe that he only goes to the pool if it is sunny and hot. Thus we assign $\mathsf{2}$ to true if it is sunny and false otherwise and $\mathsf{4}$ to true if it is hot and false otherwise. Variable $\mathsf{6}$ now represents whether or not Hans will go to the pool. We observe that he will only go to the pool if it is sunny \textit{and} hot.
+
+\begin{figure}[!htb]
+    \centering
+  \begin{minipage}[b]{.4\linewidth}
+    \centering
+    \resizebox {0.53\textwidth} {!} {
+      \includestandalone[]{standalone/aig/aig1-num}
+    }
+    \subcaption{Original.}
+    \label{fig:aig1-num}
+  \end{minipage}
+  \begin{minipage}[b]{.4\linewidth}
+    \centering
+    \resizebox {0.7\textwidth} {!} {
+      \includestandalone[]{standalone/aig/aig1-text}
+    }
+    \subcaption{Binarized.}
+    \label{fig:aig1-text}
+  \end{minipage}
+\caption{Equation~\ref{eq:ceqaandb} visualized using a graph in (\subref{fig:aig1-num}) with a possible meaning to the variables in (\subref{fig:aig1-text}). Inputs are drawn using a box node and further labeled using triangle nodes. Circular nodes perform AND on two other nodes which can be either input nodes or other AND nodes.Outputs are denoted using triangle nodes. In (\subref{fig:aig1-num}), the same object is represented, but this time a meaning to the variables is given. Hans will only go to the pool if it is sunny and hot.}
+\label{fig:aig1}
+\end{figure}
+
+\noindent We will now consider more complexity in our predictive system. Suppose Hans is only able to go to the pool if his parents additionally do not tell him to mow the lawn. The adjusted predictive system can be seen in Figure~\ref{fig:aig2}. There is a new input (I2) with a black dot at the connection to the next node. This black dot denotes negation.
+
+\begin{figure}[!htb]
+    \centering
+    \resizebox {0.5\textwidth} {!} {
+      \includestandalone[]{standalone/aig/aig2-text}
+    }
+    \caption{caption.}
+\label{fig:aig2}
+\end{figure}
+
+\subsection{Local search setup}
+
+\subsection{Experiments}

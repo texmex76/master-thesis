@@ -2,8 +2,7 @@
 \usepackage[margin=3cm]{geometry} %Definiere Rand
 \usepackage{graphicx} % Zum Einbinden von Bildern
 \usepackage[english]{babel} % Direkte Eingabe von Umlauten
-%\usepackage[utf8]{inputenc} % Direkte Eingabe von Umlauten
-\UseRawInputEncoding
+%\UseRawInputEncoding
 \usepackage[T1]{fontenc}  % Direkte Eingabe von Umlauten
 \usepackage{pgfplots} % Zum Einfuegen von Plots
 \pgfplotsset{compat=1.14} % Damit wird beim Plotten keinen Error bekommen
@@ -11,6 +10,7 @@
 \usepackage{amsmath} % Standard fuer mathematische Ausdruecke
 \usepackage{amssymb} % Weitere Symbole
 \usepackage{mathtools} % Fuer weitere mathematische Ausdruecke
+\usepackage{dsfont}
 \usepackage[font=small,labelfont=bf]{caption} % Kleinerer Text bei Captions
 \usepackage{tabu} % Anderes Tabellenenvironment, wird am Ende fuer die Namen verwendet
 \usepackage{subcaption} % Side-by-side figures with minipage
@@ -24,7 +24,7 @@
 \renewcommand{\floatpagefraction}{0.75} % Only place figures by themselves if they take up more than 75% of the page
 %
 \usepackage{threeparttable, tablefootnote}
-\usepackage{hyperref} % For hyperlinks to be clickable
+\usepackage[colorlinks,urlcolor=black,allcolors=.]{hyperref} % For hyperlinks to be clickable
 \usepackage{listings} % For embedding code into the document
 \usepackage{bm} % For bold italic letters in math mode, shorter than \boldsymbol
 \usepackage{amsthm} % For theorems, definitions, examples, etc.
@@ -32,3 +32,55 @@
 \pgfplotsset{compat=1.16} % To avoid tikz errors
 \usepackage{tcolorbox} % For boxes around text
 \usepackage{enumitem} % For enumerate and itemize, custom separations
+\usepackage{bbold} % For \mathbb{1}
+\usepackage{xcolor, soul} % For text with color background
+\definecolor{lightlightgray}{RGB}{224,224,224}
+\sethlcolor{lightlightgray} % Color background color
+\usepackage{algorithm} % For algorithm environment
+\usepackage{algpseudocode} % For pseudocode
+\newcommand{\Statein}{\State \hspace{\algorithmicindent}}
+
+% begin vertical rule patch for algorithmicx (http://tex.stackexchange.com/questions/144840/vertical-loop-block-lines-in-algorithmicx-with-noend-option)
+\makeatletter
+% start with some helper code
+% This is the vertical rule that is inserted
+\newcommand*{\algrule}[1][\algorithmicindent]{\makebox[#1][l]{\hspace*{.5em}\vrule height .75\baselineskip depth .25\baselineskip}}%
+
+\newcount\ALG@printindent@tempcnta
+\def\ALG@printindent{%
+    \ifnum \theALG@nested>0% is there anything to print
+        \ifx\ALG@text\ALG@x@notext% is this an end group without any text?
+            % do nothing
+            \addvspace{-3pt}% FUDGE for cases where no text is shown, to make the rules line up
+        \else
+            \unskip
+            % draw a rule for each indent level
+            \ALG@printindent@tempcnta=1
+            \loop
+                \algrule[\csname ALG@ind@\the\ALG@printindent@tempcnta\endcsname]%
+                \advance \ALG@printindent@tempcnta 1
+            \ifnum \ALG@printindent@tempcnta<\numexpr\theALG@nested+1\relax% can't do <=, so add one to RHS and use < instead
+            \repeat
+        \fi
+    \fi
+    }%
+\usepackage{etoolbox}
+% the following line injects our new indent handling code in place of the default spacing
+\patchcmd{\ALG@doentity}{\noindent\hskip\ALG@tlm}{\ALG@printindent}{}{\errmessage{failed to patch}}
+\makeatother
+% end vertical rule patch for algorithmicx
+
+% Adds vertical lines to algorithm loops, for better visibility
+\makeatletter
+\newcommand{\algmargin}{\the\ALG@thistlm}
+\makeatother
+\algnewcommand{\parState}[1]{\State%
+  \parbox[t]{\dimexpr\linewidth-\algmargin}{\strut #1\strut}}
+
+% Putting this here because in the standalone it does not work
+% Wasted a half day on this!
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta, trees}
+\usetikzlibrary{arrows,shapes}
+\newcommand{\mySize}{\small}
+\newcommand{\nodeSep}{0.75}

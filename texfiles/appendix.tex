@@ -1,0 +1,18 @@
+\appendix
+
+\section{Appendix}
+
+\subsection{Derivation of parameter sizes in Section~\ref{sec:models}} \label{app:size}
+The actual size on disk of a machine learning model heavily depends on its implementation which is the reason we specify only the \textit{size of all parameters} in Table~\ref{tab:ml_algos_on_bmnist} and not the actual model size. Nevertheless, the size of all parameters still gives us an insight since the machine instructions what to do with the parameters do not make up as much space. Also, some machine learning models do not have any parameters that are comparable to neural network weights or LUT table entries, such as Nearest Neighbors. For those models, the entry in Table~\ref{tab:ml_algos_on_bmnist} stays empty.
+
+Computing the parameter size of LUT networks is straight-forward. LUT networks are built of individual luts which are essentialy tables with binary entries, meaning each entry takes up one bit of space. A $d$-LUT has $2^d$ entries. For a $d$-LUT network with $L$ hidden layers and $l_i, i=1, \dots, L$ LUTs per hidden layer we can compute the parameter size of a LUT network $z$ in bytes as follows:
+
+\begin{align}
+  z = \frac{2^d + \sum\limits_{i=1}^L 2^d l_i}{8},
+\end{align}where $2^d$ is added because there is a final lut after the last hidden layer. Eight bits make up one byte.
+
+For a convolutional neural network, we consider the total number of all trainable parameters (i.e., all weight entries) which we obtain from the PyTorch model in one line of code. We assume 32-bit floats.
+
+We determine the size of all parameters of Logistic Regression and Naïve Bayes by going through all methods the respective scikit-learn object has and considering its size if it is either an int, float or Numpy array.
+
+Since Random Forests are made up of multiple decision trees, we go through each of them. In scikit-learn a decision tree has the method \hl{\texttt{tree\_}} and we consider what it contains for the size.

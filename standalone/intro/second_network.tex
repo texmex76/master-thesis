@@ -1,0 +1,39 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.11}
+\usetikzlibrary{arrows.meta}
+\begin{document}
+\resizebox {0.5\textwidth} {!} {
+\begin{tikzpicture}[]
+
+\begin{scope}[every node/.style={circle, draw, minimum size=8mm}]
+    \node (x0) at (0, 0) {$x_0$};
+    \node (x1) at (0,-1.5) {$x_1$};
+    \node (x2) at (0,-3) {$x_2$};
+    \node (x3) at (0,-4.5) {$x_3$};
+    \node (y0) at (3, -0.75) {$\hat{y}_0$};
+    \node (y1) at (3,-2.25) {$\hat{y}_1$};
+    \node (y2) at (3,-3.75) {$\hat{y}_2$};
+\end{scope}
+
+\begin{scope}[-latex, thick]
+    \draw (x0) -- (y0);
+    \draw (x1) -- (y0);
+    \draw (x2) -- (y0);
+    \draw (x3) -- (y0);
+
+    \draw (x0) -- (y1);
+    \draw (x1) -- (y1);
+    \draw (x2) -- (y1);
+    \draw (x3) -- (y1);
+
+    \draw (x0) -- (y2);
+    \draw (x1) -- (y2);
+    \draw (x2) -- (y2);
+    \draw (x3) -- (y2);
+\end{scope}
+
+\end{tikzpicture}
+}
+\end{document}

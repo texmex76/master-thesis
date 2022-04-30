@@ -5,6 +5,8 @@
 \input{texfiles/definitions.tex}
 
 \begin{document}
+\usetikzlibrary{patterns}
+
 %
     \title{Building a network without backprop\\
     \vspace{2em}
@@ -28,7 +30,7 @@
 \maketitle
    
 \begin{abstract}
-\noindent We make a network without backprop.
+\noindent Neural networks have proven to work remarkably well and are prevalent in our everyday lives. Two major concerns, however, are computational cost while training and during inference and the model size. To address these concerns, we remind ourselves that on a computer, everything is represented by 0s and 1s. Working at low level could be a step towards efficiency in terms of compute and disk space. This thesis explores the questions whether building a predictive system that natively works with binary values is possible and in the case that this is true, whether there are any advantages compared to gradient descent with backpropagation at its core.
 \end{abstract}
    
 \newpage
@@ -42,12 +44,9 @@
 \input{texfiles/lut.tex}
 \input{texfiles/aig.tex}
 
-
-\newpage
-
-\bibliographystyle{unsrt}
+\bibliographystyle{plain}
 \bibliography{bibliography}
 
-
+\input{texfiles/appendix.tex}
 
 \end{document}

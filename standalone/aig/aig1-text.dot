@@ -1,0 +1,12 @@
+digraph "and.aag" {
+"It is sunny"[shape=box];
+I0[shape=triangle,color=blue];
+"It is sunny"->I0[arrowhead=none];
+"It is hot"[shape=box];
+I1[shape=triangle,color=blue];
+"It is hot"->I1[arrowhead=none];
+"Going to the pool"->"It is sunny"[arrowhead=none];
+"Going to the pool"->"It is hot"[arrowhead=none];
+O0[shape=triangle,color=blue];
+O0 -> "Going to the pool"[arrowhead=none];
+}

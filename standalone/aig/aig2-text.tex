@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage[x11names, svgnames, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+%
+%
+
+%
+
+%
+
+\begin{document}
+\pagestyle{empty}
+%
+%
+%
+
+\enlargethispage{100cm}
+% Start of code
+\begin{tikzpicture}[>=latex',line join=bevel,]
+%%
+\begin{scope}[thick]
+  \node (It is sunny) at (166.5bp,85.5bp) [draw,rectangle] {It is sunny};
+  \node (I0) at (166.5bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I0};
+  \node (Is is hot) at (232.5bp,85.5bp) [draw,rectangle] {Is is hot};
+  \node (I1) at (232.5bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I1};
+  \node (Have to mow the lawn) at (52.5bp,149.0bp) [draw,rectangle] {Have to mow the lawn};
+  \node (I2) at (52.5bp,85.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I2};
+  \node (Want to go to the pool) at (199.5bp,149.0bp) [draw,ellipse,align=center] {Want to go \\ to the pool};
+  \node (Going to the pool) at (125.5bp,207.0bp) [draw,ellipse] {Going to the pool};
+  \node (O0) at (125.5bp,274.5bp) [draw=blue,regular polygon, regular polygon sides=3] {O0};
+\end{scope}
+\begin{scope}[thick]
+  \draw [] (It is sunny) ..controls (166.5bp,66.865bp) and (166.5bp,47.139bp)  .. (I0);
+  \draw [] (Is is hot) ..controls (232.5bp,68.145bp) and (232.5bp,47.575bp)  .. (I1);
+  \draw [] (Have to mow the lawn) ..controls (52.5bp,132.7bp) and (52.5bp,115.08bp)  .. (I2);
+  \draw [] (Want to go to the pool) ..controls (187.39bp,125.43bp) and (176.27bp,104.71bp)  .. (It is sunny);
+  \draw [] (Want to go to the pool) ..controls (211.83bp,125.02bp) and (223.46bp,103.34bp)  .. (Is is hot);
+  \draw [-*] (Going to the pool) ..controls (100.1bp,186.52bp) and (80.63bp,171.58bp)  .. (Have to mow the lawn);
+  \draw [] (Going to the pool) ..controls (151.81bp,186.09bp) and (172.71bp,170.27bp)  .. (Want to go to the pool);
+  \draw [] (O0) ..controls (125.5bp,251.95bp) and (125.5bp,230.8bp)  .. (Going to the pool);
+\end{scope}
+%
+\end{tikzpicture}
+% End of code
+
+%
+\end{document}
+%
+
+
+

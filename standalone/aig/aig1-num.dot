@@ -1,0 +1,12 @@
+digraph "and.aag" {
+"2"[shape=box];
+I0[shape=triangle,color=blue];
+"2"->I0[arrowhead=none];
+"4"[shape=box];
+I1[shape=triangle,color=blue];
+"4"->I1[arrowhead=none];
+"6"->"2"[arrowhead=none];
+"6"->"4"[arrowhead=none];
+O0[shape=triangle,color=blue];
+O0 -> "6"[arrowhead=none];
+}

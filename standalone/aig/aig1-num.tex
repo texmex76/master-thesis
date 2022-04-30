@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage[x11names, svgnames, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+%
+%
+
+%
+
+%
+
+\begin{document}
+\pagestyle{empty}
+%
+%
+%
+
+\enlargethispage{100cm}
+% Start of code
+\begin{tikzpicture}[>=latex',line join=bevel,]
+%%
+\begin{scope}[thick]
+  \node (2) at (32.0bp,75.5bp) [draw,rectangle] {2};
+  \node (I0) at (19.0bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I0};
+  \node (4) at (68.0bp,75.5bp) [draw,rectangle] {4};
+  \node (I1) at (75.0bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I1};
+  \node (6) at (47.0bp,127.5bp) [draw,ellipse] {6};
+  \node (O0) at (47.0bp,193.5bp) [draw=blue,regular polygon, regular polygon sides=3] {O0};
+\end{scope}
+\begin{scope}[thick]
+  \draw [] (2) ..controls (28.625bp,59.703bp) and (24.49bp,41.572bp)  .. (I0);
+  \draw [] (4) ..controls (69.762bp,60.153bp) and (71.827bp,43.341bp)  .. (I1);
+  \draw [] (6) ..controls (41.461bp,108.04bp) and (36.331bp,90.937bp)  .. (2);
+  \draw [] (6) ..controls (54.526bp,108.58bp) and (61.823bp,91.208bp)  .. (4);
+  \draw [] (O0) ..controls (47.0bp,170.68bp) and (47.0bp,149.14bp)  .. (6);
+\end{scope}
+%
+\end{tikzpicture}
+% End of code
+
+%
+\end{document}
+%
+
+
+

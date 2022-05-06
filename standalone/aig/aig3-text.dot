@@ -1,0 +1,31 @@
+digraph "aig3.aag" {
+"It is sunny"[shape=box];
+I0[shape=triangle,color=blue];
+"It is sunny"->I0[arrowhead=none];
+"It is hot"[shape=box];
+I1[shape=triangle,color=blue];
+"It is hot"->I1[arrowhead=none];
+"Have to mow the lawn"[shape=box];
+I2[shape=triangle,color=blue];
+"Have to mow the lawn"->I2[arrowhead=none];
+"Baseball game on"[shape=box];
+I3[shape=triangle,color=blue];
+"Baseball game on"->I3[arrowhead=none];
+"Sister is there"[shape=box];
+I4[shape=triangle,color=blue];
+"Sister is there"->I4[arrowhead=none];
+"Would like to go"->"It is sunny"[arrowhead=none];
+"Would like to go"->"It is hot"[arrowhead=none];
+"Friend over"->"It is sunny"[arrowhead=none];
+"Friend over"->"Baseball game on"[arrowhead=dot];
+"Allowed to go"->"Have to mow the lawn"[arrowhead=dot];
+"Allowed to go"->"Would like to go"[arrowhead=none];
+"Allowed and Friend over"->"Allowed to go"[arrowhead=none];
+"Allowed and Friend over"->"Friend over"[arrowhead=none];
+"Allowed and sister not there"->"Allowed to go"[arrowhead=none];
+"Allowed and sister not there"->"Sister is there"[arrowhead=dot];
+"Not going to the pool"->"Allowed and Friend over"[arrowhead=dot];
+"Not going to the pool"->"Allowed and sister not there"[arrowhead=dot];
+O0[shape=triangle,color=blue];
+O0 -> "Not going to the pool"[arrowhead=dot];
+}

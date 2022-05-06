@@ -5,19 +5,20 @@
 \begin{tikzpicture}
 \begin{axis}[
     %title={Real data},
-    width=0.8\textwidth,
-    height=0.5\textwidth,
-    xlabel={Number of lut networks},
+    %width=0.8\textwidth,
+    %height=0.5\textwidth,
+    xlabel={LUTs per hidden layer},
     ylabel={Accuracy},
     %xmin=1, xmax=17,
     %ymin=0.44, ymax=1.1,
-    xtick={2,4,8,16,32,64,128,256,512,1024},
+    xtick={2,1024,2048,4096},
     %ytick={0.5,0.6,0.7,0.8,0.9,1.00},
-    legend pos=north west,
+    legend pos=south east,
     ymajorgrids=true,
+    xmajorgrids=true,
     grid style=dashed,
-    xmode=log,
-    log ticks with fixed point,
+    %xmode=log,
+    %log ticks with fixed point,
 ]
 
 \addplot[
@@ -25,7 +26,7 @@
     mark=*,
     ]
     coordinates {
-        (2,0.67)(4,0.63)(8,0.66)(16,0.70)(32,0.73)(64,0.86)(128,0.90)(256,0.93)(512,0.93)(1024,0.94)
+        (2,0.625)(4,0.664)(8,0.749)(16,0.794)(32,0.836)(64,0.853)(128,0.882)(256,0.878)(512,0.890)(1024,0.890)(2048,0.890)(4096,0.890)
     };
     \addlegendentry{Train}
 
@@ -35,7 +36,7 @@
     dashed,
     ]
     coordinates {
-        (2,0.69)(4,0.64)(8,0.67)(16,0.72)(32,0.74)(64,0.86)(128,0.90)(256,0.93)(512,0.93)(1024,0.93)
+(2,0.632)(4,0.671)(8,0.749)(16,0.786)(32,0.827)(64,0.839)(128,0.868)(256,0.858)(512,0.872)(1024,0.878)(2048,0.874)(4096,0.873)
     };
     \addlegendentry{Test}
 

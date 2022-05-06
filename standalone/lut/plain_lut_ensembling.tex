@@ -5,15 +5,19 @@
 \begin{tikzpicture}
 \begin{axis}[
     %title={Real data},
-    xlabel={Number of bits per lut},
+    width=0.8\textwidth,
+    height=0.5\textwidth,
+    xlabel={Number of lut networks},
     ylabel={Accuracy},
-    xmin=1, xmax=17,
-    ymin=0.44, ymax=1.1,
-    xtick={2,4,6,8,10,12,14,16},
-    ytick={0.5,0.6,0.7,0.8,0.9,1.00},
+    %xmin=1, xmax=17,
+    %ymin=0.44, ymax=1.1,
+    xtick={2,4,8,16,32,64,128,256,512,1024},
+    %ytick={0.5,0.6,0.7,0.8,0.9,1.00},
     legend pos=north west,
     ymajorgrids=true,
     grid style=dashed,
+    xmode=log,
+    log ticks with fixed point,
 ]
 
 \addplot[
@@ -21,7 +25,7 @@
     mark=*,
     ]
     coordinates {
-        (2,0.66)(4,0.81)(6,0.85)(8,0.89)(10,0.94)(12,0.99)(14,1.00)(16,1.00)
+        (2,0.68)(4,0.68)(8,0.76)(16,0.76)(32,0.77)(64,0.78)(128,0.77)(256,0.78)(512,0.78)(1024,0.78)
     };
     \addlegendentry{Train}
 
@@ -31,7 +35,7 @@
     dashed,
     ]
     coordinates {
-        (2,0.66)(4,0.81)(6,0.86)(8,0.87)(10,0.89)(12,0.90)(14,0.83)(16,0.66)
+        (2,0.69)(4,0.69)(8,0.77)(16,0.77)(32,0.78)(64,0.79)(128,0.79)(256,0.79)(512,0.79)(1024,0.79)
     };
     \addlegendentry{Test}
 

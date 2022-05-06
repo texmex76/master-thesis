@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[x11names, svgnames, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+%
+%
+
+%
+
+%
+
+\begin{document}
+\pagestyle{empty}
+%
+%
+%
+
+\enlargethispage{100cm}
+% Start of code
+\begin{tikzpicture}[>=latex',line join=bevel,]
+%%
+\begin{scope}[thick]
+  \node (It is sunny) at (120.5bp,85.5bp) [draw,rectangle] {It is sunny};
+  \node (I0) at (120.5bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I0};
+  \node (It is hot) at (195.5bp,85.5bp) [draw,rectangle] {It is hot};
+  \node (I1) at (195.5bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I1};
+  \node (Have to mow the lawn) at (322.5bp,154.5bp) [draw,rectangle] {Have to mow the lawn};
+  \node (I2) at (322.5bp,85.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I2};
+  \node (Baseball game on) at (41.5bp,154.5bp) [draw,rectangle] {Baseball game on};
+  \node (I3) at (41.5bp,85.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I3};
+  \node (Sister is there) at (386.5bp,218.0bp) [draw,rectangle] {Sister is there};
+  \node (I4) at (412.5bp,154.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I4};
+  \node (Would like to go) at (195.5bp,154.5bp) [draw,ellipse,align=center] {Would like \\ to go};
+  \node (Friend over) at (111.5bp,218.0bp) [draw,ellipse] {Friend over};
+  \node (Allowed to go) at (262.5bp,218.0bp) [draw,ellipse] {Allowed to go};
+  \node (Allowed and Friend over) at (118.5bp,275.0bp) [draw,ellipse,align=center] {Allowed and \\ Friend over};
+  \node (Allowed and sister not there) at (308.5bp,275.0bp) [draw,ellipse,align=center] {Allowed and sister \\ not there};
+  \node (Not going to the pool) at (213.5bp,332.0bp) [draw,ellipse] {Not going to the pool};
+  \node (O0) at (213.5bp,399.5bp) [draw=blue,regular polygon, regular polygon sides=3] {O0};
+\end{scope}
+\begin{scope}[thick]
+  \draw [] (It is sunny) ..controls (120.5bp,66.865bp) and (120.5bp,47.139bp)  .. (I0);
+  \draw [] (It is hot) ..controls (195.5bp,68.145bp) and (195.5bp,47.575bp)  .. (I1);
+  \draw [] (Have to mow the lawn) ..controls (322.5bp,137.14bp) and (322.5bp,116.58bp)  .. (I2);
+  \draw [] (Baseball game on) ..controls (41.5bp,135.86bp) and (41.5bp,116.14bp)  .. (I3);
+  \draw [] (Sister is there) ..controls (393.56bp,200.31bp) and (402.77bp,178.52bp)  .. (I4);
+  \draw [] (Would like to go) ..controls (169.11bp,129.93bp) and (141.81bp,105.54bp)  .. (It is sunny);
+  \draw [] (Would like to go) ..controls (195.5bp,129.27bp) and (195.5bp,104.33bp)  .. (It is hot);
+  \draw [] (Friend over) ..controls (113.86bp,182.84bp) and (118.46bp,116.04bp)  .. (It is sunny);
+  \draw [-*] (Friend over) ..controls (89.515bp,197.68bp) and (69.449bp,180.05bp)  .. (Baseball game on);
+  \draw [-*] (Allowed to go) ..controls (282.65bp,196.35bp) and (299.47bp,179.11bp)  .. (Have to mow the lawn);
+  \draw [] (Allowed to go) ..controls (239.31bp,195.71bp) and (218.97bp,177.05bp)  .. (Would like to go);
+  \draw [] (Allowed and Friend over) ..controls (116.05bp,254.79bp) and (113.98bp,238.49bp)  .. (Friend over);
+  \draw [] (Allowed and Friend over) ..controls (168.28bp,254.99bp) and (212.87bp,237.95bp)  .. (Allowed to go);
+  \draw [-*] (Allowed and sister not there) ..controls (334.94bp,255.36bp) and (356.3bp,240.3bp)  .. (Sister is there);
+  \draw [] (Allowed and sister not there) ..controls (292.64bp,255.03bp) and (279.45bp,239.27bp)  .. (Allowed to go);
+  \draw [-*] (Not going to the pool) ..controls (181.06bp,312.22bp) and (158.12bp,298.94bp)  .. (Allowed and Friend over);
+  \draw [-*] (Not going to the pool) ..controls (245.85bp,312.27bp) and (268.6bp,299.1bp)  .. (Allowed and sister not there);
+  \draw [-*] (O0) ..controls (213.5bp,379.32bp) and (213.5bp,363.72bp)  .. (Not going to the pool);
+\end{scope}
+%
+\end{tikzpicture}
+% End of code
+
+%
+\end{document}
+%
+
+
+

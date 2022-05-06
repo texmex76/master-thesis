@@ -1,0 +1,31 @@
+digraph "aig3.aag" {
+"2"[shape=box];
+I0[shape=triangle,color=blue];
+"2"->I0[arrowhead=none];
+"4"[shape=box];
+I1[shape=triangle,color=blue];
+"4"->I1[arrowhead=none];
+"6"[shape=box];
+I2[shape=triangle,color=blue];
+"6"->I2[arrowhead=none];
+"8"[shape=box];
+I3[shape=triangle,color=blue];
+"8"->I3[arrowhead=none];
+"10"[shape=box];
+I4[shape=triangle,color=blue];
+"10"->I4[arrowhead=none];
+"12"->"2"[arrowhead=none];
+"12"->"4"[arrowhead=none];
+"14"->"2"[arrowhead=none];
+"14"->"8"[arrowhead=dot];
+"16"->"6"[arrowhead=dot];
+"16"->"12"[arrowhead=none];
+"18"->"16"[arrowhead=none];
+"18"->"14"[arrowhead=none];
+"20"->"16"[arrowhead=none];
+"20"->"10"[arrowhead=dot];
+"22"->"18"[arrowhead=dot];
+"22"->"20"[arrowhead=dot];
+O0[shape=triangle,color=blue];
+O0 -> "22"[arrowhead=dot];
+}

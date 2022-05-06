@@ -1,0 +1,34 @@
+\documentclass{standalone}
+\usepackage{textcomp}
+\usepackage{pgfplots}
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+    %title={Real data},
+    %width=0.8\textwidth,
+    %height=0.5\textwidth,
+    xlabel={Bit-size},
+    ylabel={Size in KB},
+    %xmin=1, xmax=17,
+    %ymin=0.44, ymax=1.1,
+    %xtick={2,4,8,16,32,64,128,256,512,1024},
+    ytick={0,500,1000,1500,2000,2500},
+    legend pos=south east,
+    ymajorgrids=true,
+    xmajorgrids=true,
+    grid style=dashed,
+    %xmode=log,
+    %log ticks with fixed point,
+]
+
+\addplot[
+    color=blue,
+    mark=*,
+    ]
+    coordinates {
+        (2,2.561)(3,5.121)(4,10.242)(5,20.484)(6,40.968)(7,81.936)(8,163.872)(9,327.744)(10,655.488)(11,1310.976)(12,2621.952)
+    };
+
+\end{axis}
+\end{tikzpicture}
+\end{document}

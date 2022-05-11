@@ -3,7 +3,9 @@
 \section{Appendix}
 
 \subsection{Derivation of parameter sizes in Section~\ref{sec:models}} \label{app:size}
-The actual size on disk of a machine learning model heavily depends on its implementation which is the reason we specify only the \textit{size of all parameters} in Table~\ref{tab:ml_algos_on_bmnist} and not the actual model size. Nevertheless, the size of all parameters still gives us an insight since the machine instructions what to do with the parameters do not make up as much space. Also, some machine learning models do not have any parameters that are comparable to neural network weights or LUT table entries, such as Nearest Neighbors. For those models, the entry in Table~\ref{tab:ml_algos_on_bmnist} stays empty.
+The actual size on disk of a machine learning model heavily depends on its implementation which is the reason we specify only the \textit{size of all parameters} in Table~\ref{tab:ml_algos_on_bmnist} and not the actual model size. Nevertheless, the size of all parameters still gives us an insight since the machine instructions what to do with the parameters do not make up as much space.
+
+For nearest neighbors, the whole dataset is required to be available for inference, so we just state the size of Binary-MNIST. Given binary features $\bm{X}$ with 60000 rows and 784 columns and binary labels $\bm{y}$ with 10000 rows and one column, we obtain 5881 KB.
 
 The size of the LUT networks is computed using Equation\ref{eq:lut_size}.
 
@@ -12,3 +14,7 @@ For a convolutional neural network, we consider the total number of all trainabl
 We determine the size of all parameters of Logistic Regression and Naïve Bayes by going through all methods the respective scikit-learn object has and considering its size if it is either an int, float or Numpy array.
 
 Since Random Forests are made up of multiple decision trees, we go through each of them. In scikit-learn a decision tree has the method \hl{\texttt{tree\_}} and we consider what it contains for the size.
+
+For random guess, we just take into account the random seed. If we use a 32-bit integer as random seed, then the parameter size becomes 4 B.
+
+The size of the AIG we computed by passing a text-based aag-file to the program \enquote{aigtoaig} from the software AIGER. The output file is an AIG in binary and we read off its size. We have to keep in mind that the binary AIG file we obtain might even be too big and could be implemented smaller.

@@ -1,0 +1,35 @@
+\section{Performance of various ML algorithms on Binary-MNIST} \label{sec:models}
+As in \cite{bib:chatterjee2018learning}, we train various machine learning algorithms on the Binary-MNIST dataset and compare their performance. The training and testing accuracies can be seen in Table~\ref{tab:ml_algos_on_bmnist} and testing accuracies are visualized in Figure~\ref{fig:model_performance}. Each LUT network has five hidden layers and 1024 LUTs per hidden layer, except the \enquote{8-LUT network slim} which has five hidden layers and 256 LUTs per hidden layer. For the reader wishing to refresh their knowledge about convolutional neural networks, \cite{bib:yamashita2018convolutional} provides a good overview. We implemented the CNN using the Python package PyTorch \cite{bib:NEURIPS2019-9015}. The CNN has two convolutional layers with 64 and 32 filters and 2 fully connected layers with 256 and 128 neurons. After the convolutions, we perform max pooling and we use ReLU as activation function between the layers. The output has a sigmoid activation function. We use the Adam optimizer and go through the dataset only once, i.e., train for one epoch. For all other learning algorithms, we use the Python package scikit-learn \cite{bib:scikit-learn}. Except the parameters that we explicitely state, we use the default parameters from scikit-learn. We can see that a 12-LUT network beats Logistic Regression and Naïve Bayes. The best performing model is a convolutional neural network. Our results are the same as in \cite{bib:chatterjee2018learning}, take or leave 1\%.
+
+\noindent Another interesting aspect to consider is how much disk space these models take up. In Table~\ref{tab:ml_algos_on_bmnist} the last column shows the size of each model in Kilobytes, the derivation of which can be seen in Appendix~\ref{app:size}. We should note that the sizes presented here are only an approximation and the actual implementation on hardware will always be bigger. In terms of accuracy, the convolutional neural network performs best. It is fairly big, though, and could be made smaller by a technique called \enquote{pruning} \cite{bib:molchanov2016pruning}. An advanced ensemble of 1024 2-LUTs with 5 layers and 64 LUTs per layer has a nice trade-off between performance and size. The AIG is one of the models with the worst accuracy, however the accuracy is still significantly above 0.50 meaning learning had taken place. With just 68 Bytes, it is by far the smallest learned model.
+
+\begin{table}[!htb]
+    \begin{small}
+        \begin{tabular}{llll}
+        Algorithm & Training    & Testing    & Size               \\
+                  & accuracy    & accuracy   &                    \\ \hline
+        Convolutional Neural Network & 0.99  & 0.99 & 1164 KB     \\
+        5-Nearest Neighbors          & 0.99  & 0.97 & 5881 KB     \\
+        1-Nearest Neighbors          & 1.00  & 0.97 & 5881 KB     \\
+        Random Forests (10 trees)    & 1.00  & 0.96 & 3797 KB     \\
+        (5@64)$\times$1024 2-LUT advanced ensemble    & 0.94  & 0.94 & 168 KB      \\
+        5@1024 12-LUT network        & 0.99  & 0.90 & 2622 KB     \\
+        5@1024 10-LUT network        & 0.94  & 0.88 & 655 KB      \\
+        5@1024 8-LUT network         & 0.89  & 0.87 & 164 KB      \\
+        5@256 8-LUT network          & 0.88  & 0.87 & 41 KB       \\
+        Logistic Regression          & 0.87  & 0.87 & 3 KB        \\
+        (5@64)$\times$1024 2-LUT plain ensemble     & 0.78  & 0.79 & 168 KB      \\
+        Naïve Bayes                  & 0.77  & 0.77 & 16 KB       \\
+        AIG (193 AND-gates)          & 0.76  & ??   & 0.0068 KB   \\
+        Random Guess                 & 0.50  & 0.50 & 0.0004 KB
+        \end{tabular}
+    \end{small}
+    \caption{Performance of various ML algorithms on the Binary-MNIST dataset. How the sizes of the parameters were computed can be seen in Appendix~\ref{app:size}. }
+\label{tab:ml_algos_on_bmnist}
+\end{table}
+
+\noindent Table~\ref{tab:ml_algos_on_bmnist} does not fully do justice to the binary models, i.e., LUT networks and AIGs because binary models have to potential to be implemented without floating-point computation and are thus much faster. An exception would be the advanced LUT ensembling from Section~\ref{sec:ada_boost} which utulizes parameters that are floats. However, apart from these parameters which are not many to begin with (as much as there are individual LUT networks), everything is in binary and thus can be implemented fast. AIGs are excellent in terms of size and speed; they are extremely small and can be easily implemented natively on hardware. However, finding a good AIG is hard, i.e., there is need for a much better search algorithm.
+
+\subsection{Findings and limitations, recommendations, future work}
+We evaluated training and testing accuracies for LUT-based models and AIGs, along with other popular machine learning models. The best performing model is the convolutional neural network, however, it is fairly big and requires floating-point computation. With advanced LUT ensembling from Section~\ref{sec:ada_boost}, we were able to improve accuracy compared to \cite{bib:chatterjee2018learning}, while also reducing model size. Using our own devised heuristic local search algorithm, we were able to find an AIG that has a testing accuracy significantly above chance and is extremely small compared to all other models. However, much remains to be done since we would like a much higher testing accuracy. AIGs are especially promosing because they can be easily implemented on hardware.
+

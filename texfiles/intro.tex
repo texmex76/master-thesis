@@ -1,67 +1,31 @@
 \section{Introduction}
-Neural networks are predictive systems that have proven to work remarkably well in lots of industries. In general, we give the neural network a $d$-dimensional vector $\bm{x}$ (we denote vectors with variables in bold) as input and as output we obtain either a single number or another vector. The output is the \textit{prediction} of the neural network given the input $\bm{x}$. A few examples of predicted quantities given some input could be the price of a house given various information about it (e.g., age, size, location, etc.), the probability of a dark skin area being a melanoma given a picture of it or a Japanese translation given a German sentence. A neural network arrives at the prediction by \textit{transforming} the input. Concretely, matrix operations are being performed. As a simple example, consider input $\bm{x} \in \mathds{R}^{4 \times 1}$ and \enquote{weights} $\bm{w} \in \mathds{R}^{4 \times 1}$. The operation $\bm{w}^\top \cdot \bm{x} = \hat{y}$ yields a single number, the predicted quantity. The symbol $\cdot$ denotes the matrix product and the symbol $\hat{}$ denotes any variable below it is a prediction. Writing it out:
 
-\begin{align} \label{eq:first_network}
-    x_0 w_0 + x_1 w_1 + x_2 w_2 + x_3 w _3 = \hat{y}.
-\end{align} If the weights have more than one column, e.g., if $\bm{W} \in \mathds{R}^{4 \times 3}$, then the operation $\bm{W}^\top \cdot \bm{x} = \hat{\bm{y}}$ yields a three-dimensional vector:
+\subsection{Background}
+Neural networks trained using gradient descent work remarkably well which is the reason for their universal use. Small neural networks have their place, but it is the large neural networks that perform complex tasks, such as translation, object recognition or autonomous driving. The more parameters, the more compute during training and inference is required and the environmental impact is a concern \cite{bib:schwartz2020green}. A cumbersome aspect of neural network-powered AI is that many models are stored on a remote server and data has to be sent over the internet. The requirement of a constant and (in most cases) fast internet connection is a serious inhibitor to applying neural networks in practice. Without being able to transmit all of its input data to a server, devices with small computing power and little storage, such as autonomous lawn mowers, intelligent cameras, smart sensors, etc, have no means to run a big neural netork.
 
-\begin{align} \label{eq:second_network}
-    \begin{split}
-        x_0 w_{00} + x_1 w_{10} + x_2 w_{20} + x_3 + w_{30} & = \hat{y}_0, \\
-        x_0 w_{01} + x_1 w_{11} + x_2 w_{21} + x_3 + w_{31} & = \hat{y}_1, \\
-        x_0 w_{02} + x_1 w_{12} + x_2 w_{22} + x_3 + w_{32} & = \hat{y}_2.
-    \end{split}
-\end{align}We can visualize the aforementioned matrix calculations using nodes and arrows, visible in Figure~\ref{fig:first_second_network}. The nodes represent individual entries of the respective vectors and the arrows multiplication with the weights. In Figure~\ref{fig:second_network}, we omitted writing the weights on the arrows for better visibility.
+\subsection{Approach}
+We know that a neural network basically is just a sequence of matrix operations; our input is transformed and we obtain a quantity of our interest which could be a probability, a number, a synthesized image, etc. We also know that a computer works with binary values, i.e., 0s and 1s. In the end, a representation of a neural network is a sequence of 0s and 1s, so is the input to the neural network and the output, which raises the question if we can \textit{directly} work with binary values, skipping layers of abstraction. Perhaps such a scheme would be more environmentally friendly since it does not require floating point operations. A small binary model that requires little compute and disk space might be a good step towards making AI more prevalent and reducing costs. Extensive research already exists to make existing neural architectures smaller to apply them at edge devices \cite{bib:liu2021bringing} which also includes binary architectures. However, most existing approaches to reduce model size into binary start with regular models and gradually transfer them to binary. We already start at binary.
 
+\subsection{Outline}
+Our questions of interest are summarized in the list below. We address (\ref{enum:build}) by looking at 2 schemes to build network-like architectures, where the former is described in a paper \cite{bib:chatterjee2018learning} and the latter we invent ourselves. We evaluate training and testing accuracies of each architecture (\ref{enum:performance}), calculate the size they take up on disk (\ref{enum:disk_space}) and discuss the computational power required to deploy these models (\ref{enum:efficiency}). The sub-items of (\ref{enum:practical}) we discuss to our best knowledge, but might only give a hint what is possible given there is room for improvement (\ref{enum:room}).
 
-\begin{figure}[!htb]
-    \centering
-    \begin{subfigure}{0.4\textwidth}
-      \centering
-    \includestandalone[]{standalone/intro/first_network}
-      \caption{Scalar output.}
-      \label{fig:first_network}
-  \end{subfigure}
-  \begin{subfigure}{0.4\textwidth}
-      \centering
-    \includestandalone[]{standalone/intro/second_network}
-      \caption{Vectorial output.}
-      \label{fig:second_network}
-  \end{subfigure}
-  \caption{Matrix operations $\bm{w}^\top \cdot \bm{x} = \hat{y}$, $\bm{x} \in \mathds{R}^{4 \times 1}$, $\bm{w} \in \mathds{R}^{4 \times 1}$ in (\subref{fig:first_network}) and $\bm{W}^\top \cdot \bm{x} = \hat{\bm{y}}$, $\bm{x} \in \mathds{R}^{4 \times 1}$, $\bm{W} \in \mathds{R}^{4 \times 3}$ in (\subref{fig:second_network}) visualized. Each node is a scalar and an arrow protruding from it denotes the scalar is multiplied with a weight.}
-\label{fig:first_second_network}
-\end{figure}
-\FloatBarrier
+\begin{enumerate}
+  \item \label{enum:build} Is it possible to build a predictive system that works entirely in binary?
+  \item \label{enum:practical} Is it practical to build a predictive system working in binary? Concretely, does a predictive system working with binary values...
+    \begin{enumerate}
+      \item \label{enum:performance} ...have a good performance in terms of accuracy?
+      \item \label{enum:disk_space} ...take up less space on disk?
+      \item \label{enum:efficiency} ...have a good performance in terms of computational efficiency?
+    \end{enumerate}
+  \item \label{enum:room} Is there room for improvement?
+\end{enumerate}
 
-\noindent The calculations performed in Equation~\ref{eq:first_network} and Equation~\ref{eq:second_network} deliver a predicted quantity, however hardly any scholar would call them neural networks. Looking at following equation, we can be confident in stating it is a neural network:
-
-\begin{align} \label{eq:third_network}
-    \bm{W}^{[3]\top} \cdot \underbrace{h \big( \bm{W}^{[2]\top} \cdot \underbrace{h \big( \bm{W}^{[1]\top} \cdot \bm{x} \big)}_{\bm{a}^{[1]}} \big)}_{\bm{a}^{[2]}} = \hat{y},
-\end{align}where $\bm{x} \in \mathds{R}^{4 \times 1}$, $\bm{W}^{[1]} \in \mathds{R}^{4 \times 5}$, $\bm{W}^{[2]} \in \mathds{R}^{5 \times 3}$, $\bm{W}^{[3]} \in \mathds{R}^{3 \times 1}$ and $h$ is an element-wise non-linear function. The intermediate results $\bm{a}^{[1]}$ and $\bm{a}^{[2]}$ are commonly called \enquote{activations}. Numbers in brackets are used to differentiate between variables and otherwise have no effect mathematically. Visualizing Equation~\ref{eq:third_network}, we obtain a graph structure as in Figure~\ref{fig:third_network}. We can see that the activations (i.e., intermediate results) are also represented using nodes. An array of nodes forming one activation vector we refer to as \enquote{hidden layer}.
+\noindent Lastly, we would like to already give away what we achieved in this thesis. Figure~\ref{fig:model_performance} visualizes testing accuracies and size for different models. The more a point lies to the top and to the left, the better. The meaning of the model names we will introduce throughout this thesis. We took an existing approach of binary model from \cite{bib:chatterjee2018learning}, visible as $\color{green} \oplus$ in Figure~\ref{fig:model_performance}, and were able to improve accuracy and reduce size, visible as $\color{violet} \bigtriangleup$ in Figure~\ref{fig:model_performance}. On the lower-left corner we can see another binary model that we built, the \enquote{AIG}. It is the weakest model in terms of accuracy in Figure~\ref{fig:model_performance}, however, it is extremely small (just 68 Bytes) and easily translatable to a circuit on hardware, making this model a very good candidate for implementing on small electronic devices, also called \enquote{edge devices}.
 
 \begin{figure}[!htb]
     \centering
-    \includestandalone[]{standalone/intro/third_network}
-    \caption{Equation~\ref{eq:third_network} visualized, a small neural network. The nodes between input and output represent intermediate results and are called \enquote{activations}. An array of nodes forming one activation vector we refer to as \enquote{hidden layer}.}
-\label{fig:third_network}
+    \includestandalone[]{standalone/lut/model_performance}
+    \caption{Testing accuracy on the dataset \enquote{Binary-MNIST} and size for various models. The $x$-axis that represents the size has a logarithmic scale. The underlying data that was used to generate this plot can be seen in Table~\ref{tab:ml_algos_on_bmnist}. Our main contributions are $\color{violet} \bigtriangleup$, a binary model with improved accuracy and reduced sized compared to an existing approach $\color{green} \oplus$ and $\otimes$, a model that is extremely small and fast, albeit with lower accuracy.}
+\label{fig:model_performance}
 \end{figure}
 \FloatBarrier
-
-\noindent When we refer to the \enquote{architecture} of a neural network, we mean the number of weight matrices, shape of weight matrices (i.e., how many rows and columns they have), types of activation functions and so on. The neural network depicted in Figure~\ref{fig:third_network} is small and simple, but enough for the sake of explaining. A good overview of different neural architectures can be found in \cite{bib:leijnen2020neural}. In case the reader wants to refresh their knowledge about neural networks, \cite{bib:goodfellow2016deep} provides a good resource.
-
-Unless an algorithm is utilized that automatically searches for a neural architecture \cite{bib:elsken2019neural}, a neural architecture has to be chosen by humans. Apart from meaningful initialization \cite{bib:DLNN1}, what humans never choose are the \enquote{parameters} of the neural network (i.e., the individual values of the weight matrices), but obtain them using an algorithm. The idea of this algorithm is to build experience from a labeled dataset. As an analogy, imagine a grown-up human has never seen an animal before in their entire life. Then we give that person 100 Polaroids depicting cats with the word \enquote{cat} written on the white part under the picture. In machine learning terminology, we would call the picture a \enquote{training example} and the word \enquote{cat} written under it on the Polaroid a \enquote{label}. In the same fashion, we give 100 Polaroids depicting dogs to that person. The entirety of cat and dog Polaroids is the labeled dataset (unlabeled datasets are used in \textit{unsupervised machine learning} \cite{bib:ghahramani2003unsupervised}). If we then show that person a yet unseen picture of either a cat or dog, then they will surely be able to tell which animal it is, meaning the person has \textit{learned} to differentiate between cats and dogs. We can do the same with a neural network. We show it a certain number of $d$-dimensional vectors with entries ranging from 0-255 (images) and every image has a label to it, 0 for cat and 1 for dog. Given enough data, through a learning algorithm the network gets proper values in its weights, such that cat pictures fed to it should produce output 0 and dog pictures output 1. Showing the dataset to the network and adjusting the weights accordingly we call \enquote{learning} or \enquote{fitting}. If we feed a yet unseen picture to the network, it should hopefully still work the same. If the network performs badly on yet unseen pictures because its architecture is too simple, we call it \enquote{underfitting}. Conversely, if it performs badly because it is complex enough to only remember pecularities in the dataset and does not grasp the general concept, we call it \enquote{overfitting}.
-
-In order to learn the parameters of a neural network, gradient descent with backpropagation \cite{bib:linnainmaa1976taylor} at its core is almost exclusively used nowadays. Backpropagation provides the gradients of the weights with respect to some \textit{loss function}. A loss function compares the prediction of the network and returns a high value if the prediction is bad and a low value if the prediction is good. We want to minimize the loss, thus the gradients of it with respect to the neural network weights provide us the direction where we want to go. We update the weights by subtracting the current gradients, scaled by a parameter called \enquote{learning rate}, from it. This procedure is called \enquote{gradient descent} and can be used with many different loss functions for many different problems which includes models that are not neural networks. Nowadays gradient descent is refined by adding many heuristics to it, for example choosing the optimal step size per parameter, the concept of \enquote{momentum}, \enquote{batching} and many more. An explanation of the terms mentioned in this paragraph and an overview of gradient descent optimization algorithms can be found in \cite{bib:ruder2016overview}.
-
-Neural networks trained using gradient descent work remarkably well which is the reason for their universal use. Small neural networks have their place, but it is the large neural networks that perform complex tasks, such as translation, object recognition or autonomous driving. The more parameters, the more compute during training and inference is required and the environmental impact is a concern \cite{bib:schwartz2020green}. We know that a neural network basically is just a sequence of matrix operations; our input is transformed and we obtain a quantity of our interest which could be a probability, a number, a synthesized image, etc. We also know that a computer works with binary values, i.e., 0s and 1s. In the end, a representation of a neural network is a sequence of 0s and 1s, so is the input to the neural network and the output, which raises the question if we can \textit{directly} work with binary values, skipping layers of abstraction. Perhaps such a scheme would be more environmentally friendly since it does not require floating point operations. A cumbersome aspect of neural network-powered AI is that many models are stored on a remote server and data has to be sent over the internet. The requirement of a constant and (in most cases) fast internet connection is a serious inhibitor to applying neural networks in practice. Without being able to transmit all of its input data to a server, devices with small computing power and little storage, such as autonomous lawn mowers, intelligent cameras, smart sensors, etc, have no means to run a big neural netork. A small binary model that requires little compute and disk space might be a good step towards making AI more prevalent and reducing costs. Extensive research already exists to make existing neural architectures smaller to apply them at edge devices \cite{bib:liu2021bringing} which also includes binary architectures. However, most existing approaches to reduce model size into binary start with regular models and gradually transfer them to binary. We already start at binary. To summarize, here are our questions of interest:
-
-\begin{itemize}
-  \item Is it possible to build a predictive system that works entirely in binary?
-  \item Is it practical to build a predictive system working in binary?
-  \item Does a predictive system working with binary values...
-    \begin{itemize}
-      \item ...have a good performance in terms of accuracy?
-      \item ...have a good performance in terms of computational efficiency?
-      \item ...take up less space on disk?
-    \end{itemize}
-\end{itemize}

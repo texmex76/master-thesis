@@ -24,12 +24,12 @@
 \begin{scope}[thick]
   \node (I0) at (131.0bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I0};
   \node (2) at (129.0bp,75.5bp) [draw,rectangle] {2};
-  \node (I1) at (187.0bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I1};
-  \node (4) at (165.0bp,75.5bp) [draw,rectangle] {4};
+  \node (I1) at (187.0bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3,dotted] {I1};
+  \node (4) at (165.0bp,75.5bp) [draw,rectangle,dotted] {4};
   \node (I2) at (19.0bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I2};
   \node (6) at (37.0bp,75.5bp) [draw,rectangle] {6};
-  \node (I3) at (149.0bp,244.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I3};
-  \node (8) at (149.0bp,317.5bp) [draw,rectangle] {8};
+  \node (I3) at (149.0bp,244.5bp) [draw=blue,regular polygon, regular polygon sides=3,dotted] {I3};
+  \node (8) at (149.0bp,317.5bp) [draw,rectangle,dotted] {8};
   \node (I4) at (75.0bp,16.5bp) [draw=blue,regular polygon, regular polygon sides=3] {I4};
   \node (10) at (79.0bp,75.5bp) [draw,rectangle] {10};
   \node (12) at (79.0bp,127.5bp) [draw,ellipse,solid] {12};
@@ -45,9 +45,9 @@
 \end{scope}
 \begin{scope}[thick]
   \draw [] (2) ..controls (129.49bp,60.491bp) and (130.05bp,44.639bp)  .. (I0);
-  \draw [] (4) ..controls (170.84bp,59.365bp) and (178.23bp,40.217bp)  .. (I1);
+  \draw [dotted] (4) ..controls (170.84bp,59.365bp) and (178.23bp,40.217bp)  .. (I1);
   \draw [] (6) ..controls (32.256bp,59.477bp) and (26.317bp,40.672bp)  .. (I2);
-  \draw [] (8) ..controls (149.0bp,300.34bp) and (149.0bp,276.95bp)  .. (I3);
+  \draw [dotted] (8) ..controls (149.0bp,300.34bp) and (149.0bp,276.95bp)  .. (I3);
   \draw [] (10) ..controls (78.001bp,60.266bp) and (76.844bp,43.776bp)  .. (I4);
   \draw [-*] (12) ..controls (65.972bp,110.99bp) and (54.891bp,97.798bp)  .. (6);
   \draw [] (12) ..controls (79.0bp,107.49bp) and (79.0bp,90.668bp)  .. (10);

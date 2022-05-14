@@ -1,29 +1,29 @@
 \section{And-inverter graphs (AIGs)}
-We will now consider another scheme of building a circuit. First we will introduce the concept of an AIG and how it can be used to predict something. Then, we will devise an initialization and heuristic local search algorithm that we try out by running experiments. Consequently, we will interpret the results.
+We will now consider another scheme of building a circuit. First we will introduce the concept of an AIG and how it can be used to predict something. Then, we will devise an initialization scheme and heuristic local search algorithm that we try out by running experiments. We will find that the local search algorithm works and we are able to iteratively improve the accuracy. The resulting AIGs are very small (way below 1 Kilobyte), so their implementation on devices with little computing power is promising. What remains to be done is to try out better search algorithms that find AIGs with higher accuracies and are faster.
 
 \subsection{Introduction}
 Let us start by introducing another predictive system that looks like a network and works with binary values. Consider binary variable $\mathsf{2}$. For consistency, which will become apparent later on, we will use numeric variables. It can either be true or false. Introducing another variable $\mathsf{4}$, we can perform a logical operation on $\mathsf{2}$ and $\mathsf{4}$, similar to how we can perform a mathematical operation with two real numbers (e.g., adding, subtracting, dividing them, etc.). Logical operators include AND ($\wedge$), OR ($\vee$), IMPLICATION ($\Rightarrow$), XOR ($\otimes$) and so on. If we compute
 
 \begin{align} \label{eq:ceqaandb}
-    \mathsf{6} = \mathsf{2} \wedge \mathsf{4},
-  \end{align}where $\mathsf{6}$ is another binary variable, we can visualize this using a graph, visible in Figure~\ref{fig:aig1}. First let us consider Figure~\ref{fig:aig1-text}. We interpret variables $\mathsf{2}$ and $\mathsf{r}$ as \textit{inputs} and thus draw them using boxes and label them additionally using triangle nodes. Variable $\mathsf{6}$ in Equation~\ref{eq:ceqaandb} becomes and \textit{and-node}, i.e., it is the result of performing AND on $\mathsf{2}$ and $\mathsf{4}$, and we denote it using a circular node. Since variable $\mathsf{6}$ is already the output of equation~\ref{eq:ceqaandb}, we mark using a triangle node. We could already imagine Equation~\ref{eq:ceqaandb} being a predictive system. Suppose we want to build a predictive system that forecasts whether or not teenage boy \enquote{Hans} will refresh himself at the family's swimming pool. We are his neighbors and have good information about his daily life, albeit limited. We observe that on a sunny and hot day, he is almost always at the pool. Thus we assign $\mathsf{2}$ to true if it is sunny and false otherwise and $\mathsf{4}$ to true if it is hot and false otherwise. Variable $\mathsf{6}$ now represents our prediction if Hans will go to the pool. Figure~\ref{fig:aig1-text} visualizes this predictive system.
+    \mathsf{12} = \mathsf{2} \wedge \mathsf{4},
+  \end{align}where $\mathsf{12}$ is another binary variable, we can visualize this using a graph, visible in Figure~\ref{fig:aig1}. First let us consider Figure~\ref{fig:aig1-text}. We interpret variables $\mathsf{2}$ and $\mathsf{4}$ as \textit{inputs} and thus draw them using boxes and label them additionally using triangle nodes. Variable $\mathsf{6}$ in Equation~\ref{eq:ceqaandb} becomes and \textit{and-node}, i.e., it is the result of performing AND on $\mathsf{2}$ and $\mathsf{4}$, and we denote it using a circular node. Since variable $\mathsf{12}$ is already the output of equation~\ref{eq:ceqaandb}, we mark it using a triangle node. We could already imagine Equation~\ref{eq:ceqaandb} being a predictive system. Suppose we want to build a predictive system that forecasts whether or not teenage boy \enquote{Hans} will refresh himself at the family's swimming pool. We are his neighbors and have good information about his daily life, albeit limited. We observe that on a hot and sunny day, he is almost always at the pool. Thus we assign $\mathsf{2}$ to true if it is sunny and false otherwise and $\mathsf{4}$ to true if it is hot and false otherwise. Variable $\mathsf{12}$ now represents our prediction if Hans will go to the pool. Figure~\ref{fig:aig1-text} visualizes this predictive system.
 
 \begin{figure}[!htb]
     \centering
-  \begin{minipage}[b]{.4\linewidth}
+  \begin{minipage}[b]{.3\linewidth}
     \centering
-    \resizebox {0.53\textwidth} {!} {
+    \resizebox {0.63\textwidth} {!} {
       \includestandalone[]{standalone/aig/aig1-num}
     }
-    \subcaption{Original.}
+    \subcaption{Plain tree.}
     \label{fig:aig1-num}
   \end{minipage}
-  \begin{minipage}[b]{.4\linewidth}
+  \begin{minipage}[b]{.5\linewidth}
     \centering
-    \resizebox {0.7\textwidth} {!} {
+    \resizebox {0.5\textwidth} {!} {
       \includestandalone[]{standalone/aig/aig1-text}
     }
-    \subcaption{Binarized.}
+    \subcaption{Tree with interpretation of variables.}
     \label{fig:aig1-text}
   \end{minipage}
 \caption{Equation~\ref{eq:ceqaandb} visualized using a graph in (\subref{fig:aig1-num}) with a possible meaning to the variables in (\subref{fig:aig1-text}). Inputs are drawn using a box node and further labeled using triangle nodes. Circular nodes perform AND on two other nodes which can be either input nodes or other AND nodes. Outputs are denoted using triangle nodes. In (\subref{fig:aig1-num}), the same object is represented, but this time a meaning to the variables is given. We predict teenage boy Hans to go to the pool if it is sunny and hot.}
@@ -31,123 +31,170 @@ Let us start by introducing another predictive system that looks like a network 
 \end{figure}
 \FloatBarrier
 
-\noindent We will now consider more complexity in our predictive system. We observe that on some days, Hans is mowing the lawn instead of relaxing at the pool, surely because his parents told him to do so. The adjusted predictive system can be seen in Figure~\ref{fig:aig2}. There is a new input (I2) with a black dot at the connection to the next node. This black dot denotes negation.
+\noindent Looking at Figure~\ref{fig:aig1-text}, we notice that it looks like an upside-down tree that has two branches. Consequently, given any node, nodes that are connected and above it we call \enquote{parents}. For example, variable $\mathsf{12}$ is the parent of variable $\mathsf{2}$ and $\mathsf{4}$ because it is further down in the tree. Nodes that are below a node and connected to it we call \enquote{children}, so variables $\mathsf{2}$ and $\mathsf{4}$ are children of variable $\mathsf{12}$.
+
+\noindent We will now consider more complexity in our predictive system. We observe that on some days, Hans is mowing the lawn instead of relaxing at the pool, surely because his parents told him to do so. If binary variable $\mathsf{6}$ represents whether or not Hans has to mow the lawn, we can update our predictive system:
+
+\begin{align} \label{eq:aig2}
+  \mathsf{16} = \lnot \mathsf{6} \wedge (2 \wedge 4).
+\end{align}, where the symbol $\lnot$ denotes negation and variable $\mathsf{16}$ is the new output. The visualization of Equation~\ref{eq:aig2} using a graph can be seen in Figure~\ref{fig:aig2}. There is a new input (I2) with a black dot at the connection to the next node. This black dot denotes negation.
 
 \begin{figure}[!htb]
     \centering
-    \resizebox {0.5\textwidth} {!} {
+  \begin{minipage}[b]{.3\linewidth}
+    \centering
+    \resizebox {0.875\textwidth} {!} {
+      \includestandalone[]{standalone/aig/aig2-num}
+    }
+    \subcaption{Plain tree.}
+    \label{fig:aig2-num}
+  \end{minipage}
+  \begin{minipage}[b]{.6\linewidth}
+    \centering
+    \resizebox {0.8\textwidth} {!} {
       \includestandalone[]{standalone/aig/aig2-text}
     }
-    \caption{Predictive system from Figure~\ref{fig:aig1} with complexity added. There is now another binary variable \enquote{Have to mow the lawn} which is an input. The black dot denotes negation. What was previously the output of the system becomes an intermediate result: \enquote{Want to go to the pool}.}
+    \subcaption{Tree with interpretation of variables.}
+    \label{fig:aig2-text}
+  \end{minipage}
+\caption{Predictive system from Figure~\ref{fig:aig1} with complexity added. There is now another binary variable \enquote{Have to mow the lawn} which is an input. The black dot denotes negation. What was previously the output of the system becomes an intermediate result: \enquote{Want to go to the pool}.}
 \label{fig:aig2}
 \end{figure}
 \FloatBarrier
 
-\noindent Lets us now consider even more complexity. We know that Hans has a sister and sometimes we would find her alone at the pool on a hot and sunny day, but we never observe the two being together there. On one occasion, we see that Hans chases her away from the pool with his Friend. Hans' friend is not over as much as he could be and we have in vague memory that he is an avid baseball fan. So when a baseball game is on TV, Hans' friend prefers to stay at home and watch it. We thus come up with folliwing reasoning: Hans does not like being at the pool with his sister together, probably because he thinks she is annoying. But if his friend is over, he has the courage to chase her away. The friend only comes over if no baseball game is on TV. The resulting predictive system is visualized in Figure~\ref{fig:aig3}. We invite the reader to take some time studying it. The upper most part can be understood easily by considering that for boolean variables $A$ and $B$: $A \vee B \Leftrightarrow \lnot (\lnot A \wedge \lnot B)$.
+\noindent Lets us now consider even more complexity. We know that Hans has a sister and sometimes we would find her alone at the pool on a hot and sunny day, but we never observe the two being together there. On one occasion, we see that Hans chases her away from the pool with his Friend. Hans' friend is not over as much as he could be and we have in vague memory that he is an avid baseball fan. We thus come up with folliwing reasoning: Hans does not like being at the pool with his sister together, probably because he thinks she is annoying. But if his friend is over, he has the courage to chase her away. If a baseball game is on TV, Hans' friend will prefer to stay at home and watch it. The resulting predictive system is visualized in Figure~\ref{fig:aig3-num} with numeric variable names and in Figure~\ref{fig:aig3} with an interpretation given to the variables. We invite the reader to take some time studying it. The upper most part can be understood easily by considering that for boolean variables $A$ and $B$: $A \vee B \Leftrightarrow \lnot (\lnot A \wedge \lnot B)$.
 
-% [x] This is what we predict, not how it is in real life
-% [x] Intermediate results ususlly have no interpretation
-% [x] As with LUTs, a system like this cannot handle uncertainty (probability in %)
-% [ ] These are AIGs
-
-Looking at Figure~\ref{fig:aig3}, it looks like we are dealing with facts and implication, but really this is a \textit{predictive system}, so its output is not guaranteed to be true. After all, we constructed this system with our own (limited) information. There are many more factors to consider if Hans will go to the swimming pool, such as homework, the pool being under maintemance, his sister being away and so on. Another interesting aspect about Figure~\ref{fig:aig3} is that intermediate results have names, such as \enquote{Friend over} and \enquote{Allowed and sister not there}. Generally, assigning interpretations to intermediate results is not trivial, especially if the graph is very big. Imagine if we had hundrets of inputs and thousands of nodes. Thus we will not try to explain intermediate results from now on. As with LUTs, a predictive system like this cannot handle uncertainty, i.e., what is the \textit{probability} of Hans going to the pool. The output is either 0 or 1. We could discretize the output range (e.g., 0-25\%, 26-50\%, 51-75\%, 76-100\%) and have multiple outputs, but additional constraints would be needed to make only one output evaluate to 1 at the same time. In this thesis, we do not consider probabilistic output.
-
-This new type of predictive systems introduced in this section are called \enquote{and-inverter graphs} (AIGs) \cite{bib:aig_wiki}. Usually AIGs are used as circuits. We, however, use them in a machine learning context, i.e., given a training set with features and labels we search for an architecture that has the highest possible accuracy.
+\begin{figure}[!htb]
+    \centering
+    \resizebox {0.35\textwidth} {!} {
+      \includestandalone[]{standalone/aig/aig3-num}
+    }
+    \caption{Predictive system if teenage boy Hans will go relax himself at the family's swimming pool, with more complexity added.}
+\label{fig:aig3-num}
+\end{figure}
+\FloatBarrier
 
 \begin{figure}[!htb]
     \centering
     \resizebox {0.65\textwidth} {!} {
       \includestandalone[]{standalone/aig/aig3-text}
     }
-    \caption{Predictive system if teenage boy Hans will go relax himself at the family's swimming pool, the same as in Figure~\ref{fig:aig2}, but with more complexity added. The upper most part can be understood easily by considering that for boolean variables $A$ and $B$: $A \vee B \Leftrightarrow \lnot (\lnot A \wedge \lnot B)$.}
+    \caption{Predictive system if teenage boy Hans will go relax himself at the family's swimming pool, with more complexity added. Here we wrote an interpretation to each node. The upper most part can be understood easily by considering that for boolean variables $A$ and $B$: $A \vee B \Leftrightarrow \lnot (\lnot A \wedge \lnot B)$.}
 \label{fig:aig3}
 \end{figure}
 \FloatBarrier
 
+An interpretation, such as in Figure~\ref{fig:aig3} is usually not available to us. For example, in the case of the Binary-MNIST dataset, there are 784 possible inputs and a heuristic random search algorithm (that we will later introduce) searches for an AIG structure. Even if the meaning of each input is apparent to us, how these inputs are processed further down in the tree is hard to interpret. In the following sections, we will thus not try to come up with an interpretation of the trees.
 
-\subsection{Initialization of random AIG}
-In the beginning, we initialize a random AIG. We need a systematic way to build an AIG structure, where cyclicity is forbidden. We use an approach inspired from neural networks. A NN has a certain number of hidden layers and each hidden layer takes input \textit{only} from the previous one. Thus there is never cyclicity. A similar approach can be done for AIGs. We specify the number of hidden layers, the number of nodes per hidden layer and how many outputs there are. Each node takes two inputs randomly from \textit{any previous hidden layer} and the inputs to the node are randomly negated or not. We perform the same initialization for the output nodes, but limit the inputs to be from the last hidden layer, to favor more complexity. Important to note is that almost all architectures initialized this way have \enquote{inactive nodes}, i.e. they do not contribute to the final prediction. Inactive nodes are still part of the architecture, though, and may become active during the search process. Algorithm~\ref{alg:aig_init} visualizes this whole process. Figure~\ref{fig:aig-init} visualizes a randomly initialized AIGs, where the inactive nodes are in dashed.
+Looking at Figure~\ref{fig:aig3}, it looks like we are dealing with facts and implication, but really this is a \textit{predictive system}, so its output is not guaranteed to be true. After all, we constructed this system with our own limited information. There are many more factors to consider if Hans will go to the swimming pool, such as homework, the pool being under maintemance, Hans prefering to play computer games indoor and so on. As with LUTs, a predictive system like this cannot handle uncertainty, i.e., what is the \textit{probability} of Hans going to the pool. The output is either 0 or 1. One solution would be to discretize the probability range, e.g., 0-25\%, 26-50\%, 51-75\%, 76-100\% and have a 2-bit output. In this thesis, however, we do not consider probabilistic output.
 
-\begin{algorithm}
-  \caption{Random AIG initialization}
-  \label{alg:aig_init}
-  \begin{algorithmic}
-    \State Given number of inputs $I \in \mathds{N}$, number of hidden layers $L \in \mathds{N}$, number of nodes per hidden layer $l_1, \dots, l_L$ and number of outputs $O \in \mathds{N}$, construct a random AIG.
-    \vspace{1em}
-    \For{hidden layer $i = 1, \dots, L$}
-      \For{node $l_1, \dots, l_L$}
-        \State Choose first parent randomly from any nodes in the previous layers
-        \State Choose second parent randomly from any nodes in the previous layers
-        \State Negate first parent with a 50\% chance
-        \State Negate second parent with a 50\% change
-      \EndFor
-    \EndFor
-    \For{output node $i = 1, \dots, O$}
-      \State Choose first parent randomly from last hidden layer
-      \State Choose second parent randomly from last hidden layer
-    \EndFor
-  \end{algorithmic}
-\end{algorithm}
-\FloatBarrier
+This new type of predictive systems introduced in this section are called \enquote{and-inverter graphs} (AIGs) \cite{bib:aig_wiki}. AIGs are used to represent logic functions and they can be easily implemented as circuits. We will use them in a machine learning context, i.e., given a training set with features and labels we search for an architecture that has the highest possible accuracy.
+
+\subsection{Initialization of a random AIG}
+First we must initialize a random AIG that we can later pass to the heuristic local search algorithm. We need a systematic way to build an AIG structure, where cyclicity is forbidden. We use an approach inspired from neural networks. A NN has a certain number of hidden layers and each hidden layer takes input only from the previous one. Thus there is never cyclicity. We take a similar approach for AIGs by specifying the number of hidden layers, the number of nodes per hidden layer and how many outputs there are. Each node takes two inputs (i.e., children $c_1$ and $c_2$) randomly from the previous hidden layer and the inputs to the node are randomly negated or not. Important to note is that almost all architectures initialized this way have \enquote{inactive nodes}, i.e. they do not contribute to the final prediction. Inactive nodes are still part of the architecture, though, and may become active during the search process. An AIG with all inactive nodes removed, we call a \enquote{pruned AIG}. Figure~\ref{fig:aig-init} visualizes a randomly initialized AIGs, where the inactive nodes are dotted. Algorithm~\ref{alg:aig_init} described the initialization process more formally. 
 
 \begin{figure}[!htb]
     \centering
     \resizebox {0.45\textwidth} {!} {
       \includestandalone[]{standalone/aig/aig-init}
     }
-    \caption{Randomly initialized AIG with inactive nodes (dashed). Inactive nodes do not contribute to the prediction, but may become active during the search process.}
+    \caption{Randomly initialized AIG with inactive nodes (dotted). Inactive nodes do not contribute to the prediction, but may become active during the search process. Input nodes I1 and I3 also do not contribute to the prediction.}
 \label{fig:aig-init}
 \end{figure}
 \FloatBarrier
 
-\subsection{Local search}
-We consider each active node in the graph. Each node takes two inputs that we call \enquote{parents}. We change one parent randomly and calculate the average accuracy score on the training set for this new architecture. During this, it is possible that a previously inactive node becomes active. We take the original architecture and change the polarity of one parent randomly and score this architecture. After running through all active nodes, the best new architecture is taken, provided that the difference to the old accuracy passes a tolerance value. If the new best architecture does not surpass this tolerance, we do another iteration. We set a patience of $n$ iterations without any change.
+\begin{algorithm}
+  \caption{Random AIG initialization}
+  \label{alg:aig_init}
+  \begin{algorithmic}
+    \State Given number of inputs $I$, number of hidden layers $L$, number of nodes per hidden layer $l_1, \dots, l_L$ and number of outputs $O$, construct a random AIG.
+    \vspace{1em}
+    \For{hidden layer $i = 1, \dots, L$}
+      \For{node $l_1, \dots, l_L$}
+        \State Choose $c_1$ randomly from any nodes in the previous layer
+        \State Negate $c_1$ with a 50\% chance
+        \State Choose $c_2$ randomly from any nodes in the previous layer,  where $c_2 \neq c_1$
+        \State Negate $c_2$ with a 50\% change
+      \EndFor
+    \EndFor
+    \For{output node $i = 1, \dots, O$}
+      \State Choose $c_1$ randomly from any nodes in the last hidden layer
+      \State Negate $c_1$ with a 50\% chance
+      \State Choose $c_2$ randomly from any nodes in the hast hidden layer,  where $c_2 \neq c_1$
+      \State Negate $c_2$ with a 50\% change
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+\FloatBarrier
+
+\subsection{Greedy local search}
+Given our dataset and randomly initialized AIG, we would like an architecture that has the highest possible performance in terms of accuracy, meaning we need a search algorithm. We choose a greedy local search \cite{bib:koller2009probabilistic} because it is fairly simple and easy to implement, thus a great way to start. The basic idea is to consider a set of successor architectures. Such a set arises when we consider each active node in the graph and change a small thing, i.e., change a child to another node or negating a child. We score each architecture and take the one that has the highest training accuracy, thus proceeding to the next iteration. If the training accuracy does not improve for a certain number of iterations, we finish. The greedy local search is described in Algorithm~
+\ref{alg:aig_local_search}.
 
 \begin{algorithm}
-  \caption{AIG heuristic local search}
+  \caption{AIG greedy local search}
   \label{alg:aig_local_search}
   \begin{algorithmic}
-    \State Given binary dataset $(\boldsymbol{X}, \bm{y})$ and randomly initialized AIG, find the architecture that performs best on the dataset in terms of accuracy.
+    \State Given binary dataset $(\boldsymbol{X}, \bm{y})$ and randomly initialized AIG with architecture $\sigma_0$, perform a greedy local search.
     \vspace{1em}
     \State Choose hyperparameters:
       \Statein Patience $p$
     \State $\text{no\_change} \in \mathds{N} \gets 0$
-    \State $\text{best} \in \mathds{R} \gets 0$
+    \State $s \in \mathds{R} \gets 0$
+    \State $\sigma \gets \sigma_0$
     \While{$\text{no\_change} < p$}
-      \For{all active nodes}
-        \State Change first parent to node in any previous layer, evaluate
-        \State Change second parent to node in any previous layer, evaluate
-        \State Change polarity of first parent, evaluate
-        \State Change polarity of second parent, evaluate
-    \EndFor
-    \State $\text{curr} \gets \text{max}(.)$
-    \If{\text{curr} > \text{best}}
-      \State $\text{best} \gets \text{curr}$
-      \State $\text{no\_change} \gets 0$
-      \State Change architecture to best
-    \Else
-      \State $\text{no\_change} \mathrel{+}= 1$
-    \EndIf
-  \EndWhile
+      \State $\Sigma = [\hspace{0.3em}]$
+      \State $S = [\hspace{0.3em}]$
+      \For{all active nodes in $\sigma$}
+          \State $\sigma' \gets$ change $c_1$ to any node in the previous layer
+          \State $\Sigma.\text{append}(\sigma')$, $S.\text{append}(\text{accuracy\_score}(\sigma', (\bm{X}, \bm{y})))$
+          \State $\sigma' \gets$ change $c_2$ to any node in the previous layer
+          \State $\Sigma.\text{append}(\sigma')$, $S.\text{append}(\text{accuracy\_score}(\sigma', (\bm{X}, \bm{y})))$
+          \State $\sigma' \gets$ change polarity of $c_1$
+          \State $\Sigma.\text{append}(\sigma')$, $S.\text{append}(\text{accuracy\_score}(\sigma', (\bm{X}, \bm{y})))$
+          \State $\sigma' \gets$ change polarity of $c_2$
+          \State $\Sigma.\text{append}(\sigma')$, $S.\text{append}(\text{accuracy\_score}(\sigma', (\bm{X}, \bm{y})))$
+      \EndFor
+      \State $s' \gets \text{max}(S)$
+      \If{s' > s}
+        \State $s \gets s'$
+        \State $\text{no\_change} \gets 0$
+        \State $\sigma \gets \Sigma[\text{argmax}(S)]$
+      \Else
+        \State $\text{no\_change} \mathrel{+}= 1$
+      \EndIf
+    \EndWhile
   \end{algorithmic}
 \end{algorithm}
 \FloatBarrier
 
 \subsection{Experiments}
-We again use the Binary-MNIST dataset. In the end, we would like to obtain an AIG where we feed in the 784-dimensional input and get the correct output class. We use the AIG format and library \enquote{AIGER} \cite{bib:Biere-FMV-TR-07-1} to specify and run our AIGs. The network structure and local search algorithm we have written from scratch in C++. The code is available on GitHub \cite{bib:aig_github}. Utilizing initialization from Algorithm~\ref{alg:aig_init} and training from Algorithm~\ref{alg:aig_local_search}, we run 38 experiments. In Figure~\ref{fig:aig_exp_result} 10 of those runs are visualized. Each run represents the training accuracy. The mean final accuracy of all runs is 0.68, the minimum final accuracy is 0.51 and 0.77 is the maximum. The initial training accuracies range from 0.51 to 0.61. A higher initial training accuracy does not necessarily mean a higher final accuracy.
+We again use the Binary-MNIST dataset. We use the AIG format and library \enquote{AIGER} \cite{bib:Biere-FMV-TR-07-1} to specify and run our AIGs. The network structure and local search algorithm we have written from scratch in C++. Along with random initialization and the local search, the code features functionality to export into AIGER format and to export visualizations. The code is available on GitHub \cite{bib:aig_github}. Utilizing initialization from Algorithm~\ref{alg:aig_init} and training from Algorithm~\ref{alg:aig_local_search}, we run 42 experiments. There are 784 inputs and we choose 3 hidden layers with 64 AND nodes per hidden layer, meaning any resulting AIG will maximally have 192 AND-gates. The very low number of AND-gates that we permit is due to computational constraints, otherwise it would take too long. The output layer has one AND node and takes inputs from the last hidden layer. In Figure~\ref{fig:aig_exp_result}, 10 out of the 42 runs are visualized. The mean final training and testing accuracies of all runs 0.65 and 0.66, respectively, the minimum final accuracies are 0.51 each and 0.74 are the maxima each. The initial training accuracies range from 0.51 to 0.61. A higher initial training accuracy does not necessarily mean a higher final accuracy. A visualization of the pruned best AIG found can be seen in Appendix~\ref{app:aig-mnist}.
 
 \begin{figure}[!htb]
     \centering
-    %\resizebox {0.5\textwidth} {!} {
-      \includestandalone[]{standalone/aig/aig_exp_result}
-    %}
-      \caption{Results (training accuracies) of greedy local search according to Algorithm~\ref{alg:aig_local_search} on AIGs. We performed 38 experiments, 10 of which are visualized here. The initial training accuracies vary from 0.61 to 0.61. A higher initial training accuracy does not necessarily mean a higher final accuracy. Best of all runs was 0.77.}
+  \begin{minipage}[b]{.49\linewidth}
+    \resizebox {1\textwidth} {!} {
+    \includestandalone[]{standalone/aig/aig_exp_result_train}
+    }
+    \subcaption{Training.}
+    \label{fig:aix_exp_result:train}
+  \end{minipage}
+  \begin{minipage}[b]{.49\linewidth}
+    \resizebox {1\textwidth} {!} {
+    \includestandalone[]{standalone/aig/aig_exp_result_test}
+    }
+    \subcaption{Testing.}
+    \label{fig:aig_exp_result:test}
+  \end{minipage}
+  \caption{Results (training accuracies) of greedy local search according to Algorithm~\ref{alg:aig_local_search} on AIGs. We performed 38 experiments, 10 of which are visualized here. The initial training accuracies vary from 0.61 to 0.61. A higher initial training accuracy does not necessarily mean a higher final accuracy. Best of all runs was 0.77.}
 \label{fig:aig_exp_result}
 \end{figure}
 \FloatBarrier
 
-\noindent We can see that we are able to improve training accuracy iteratively, albeit with much less satisfying results than with LUT-based models. The LUT algorithm (Algorithm~\ref{alg:LUT}) provides a straight-forward way to construct a functioning model, here with AIGs we are groping in the dark. The good news is that we are indeed able to find better areas in the huge search space, hinting that there is much potential to uncover. The bad news is that Algorithm~\ref{alg:aig_local_search} is too crude to achieve at least the same performance as with LUT networks. What happens often is to get stuck at sub-optimal areas, from which the accuracy never recovers. For example, in Figure~\ref{fig:aig_exp_result} we can see a run that starts at a very low accuracy and never goes up at all. So there is need for a more advanced scheme. Whereas with LUT networks, the (possibly not yet fully optimized) Python implementation was slowing learning and inference down, with AIGs the local search algorithm itself is very costly. The local search algorithm we devised seems to operate on a very low level, learning speed is slow.
+\noindent We can see that we are able to improve the accuracy iteratively. With AIGs, the greedy local search algorithm is probably too optimistic, though, since we quickly bump into an upper ceiling. What also happens is to get stuck at sub-optimal areas, from which the accuracy never recovers. For example, in Figure~\ref{fig:aig_exp_result}, we can see a run that starts at a very low accuracy and never goes up at all. So there is need for a different search algorithm.
 
-\subsection{Findings and limitations, recommendations, future work}
-We introduced AIGs and investigated whether or not they can be used to predict something, where we have found out that the use of AIGs as classifiers that are trained like a regular machine learning model is possible. However, we found much lower performance than LUT networks which we think is due to three main reasons: possibly sub-optimal initialization, a too naïve learning algorithm and a search algorithm implementation that lacks optimization, especially multi-processing. Since we devised initialization, learning and the implementation from scratch, we think that there is much room for improvement. The very promising aspect of AIGs is the tiny model size and ultra fast inference speed compared to traditional machine learning model. They can also be implemented easily on hardware.
+The extremely small size of the AIGs is promising. With the architecture chosen for the experiment, a single AIG only has 68 Bytes of disk size (we arrived at this number by converting an ASCII-encoded AIG file to binary using AIGER and looking at the file size). A small size, together with the lack of need for floating-point matrix computations, make these architectures extremely fast and thus suitable for electronic devices with very little computing power. Furthermore, AIGs are easily translatable to circuits that are implemented on hardware, so the architecture could be much bigger.
 
+\subsection{Summary}
+We introduced AIGs and investigated whether or not they can be used as predictive systems, where we have found that this is possible. We conceptualized our own initialization scheme and chose a greedy local search as search algorithm. We wrote the code for our experiments in C++ from scratch, making use of the AIGER library. Choosing an architecture that has maximally just 192 AND-gates, the best local search run returned an AIG that has an accuracy of 0.76 which is significantly above chance, meaning learning had taken place. The extremely small size, together with the prospect of implementation on hardware make AIGs very promising. Future work should consist of trying to find better search algorithms that are able to find better architectures in less time.

@@ -169,7 +169,7 @@ Given our dataset and randomly initialized AIG, we would like an architecture th
 \FloatBarrier
 
 \subsection{Experiments}
-We again use the Binary-MNIST dataset. We use the AIG format and library \enquote{AIGER} \cite{bib:Biere-FMV-TR-07-1} to specify and run our AIGs. The network structure and local search algorithm we have written from scratch in C++. Along with random initialization and the local search, the code features functionality to export into AIGER format and to export visualizations. The code is available on GitHub \cite{bib:aig_github}. Utilizing initialization from Algorithm~\ref{alg:aig_init} and training from Algorithm~\ref{alg:aig_local_search}, we run 42 experiments. There are 784 inputs and we choose 3 hidden layers with 64 AND nodes per hidden layer, meaning any resulting AIG will maximally have 192 AND-gates. The very low number of AND-gates that we permit is due to computational constraints, otherwise it would take too long. The output layer has one AND node and takes inputs from the last hidden layer. In Figure~\ref{fig:aig_exp_result}, 10 out of the 42 runs are visualized. The mean final training and testing accuracies of all runs 0.65 and 0.66, respectively, the minimum final accuracies are 0.51 each and 0.74 are the maxima each. The initial training accuracies range from 0.51 to 0.61. A higher initial training accuracy does not necessarily mean a higher final accuracy. A visualization of the pruned best AIG found can be seen in Appendix~\ref{app:aig-mnist}.
+We again use the Binary-MNIST dataset. We use the AIG format and library \enquote{AIGER} \cite{bib:Biere-FMV-TR-07-1} to specify and run our AIGs. The network structure and local search algorithm we have written from scratch in C++. Along with random initialization and the local search, the code features functionality to export into AIGER format and to export visualizations. The code is available on GitHub \cite{bib:aig_github}. Utilizing initialization from Algorithm~\ref{alg:aig_init} and training from Algorithm~\ref{alg:aig_local_search}, we run 42 experiments. There are 784 inputs and we choose 3 hidden layers with 64 AND nodes per hidden layer, meaning any resulting AIG will maximally have 192 AND-gates. The very low number of AND-gates that we permit is due to computational constraints, otherwise it would take too long. The output layer has one AND node and takes inputs from the last hidden layer. In Figure~\ref{fig:aig_exp_result}, 10 out of the 42 runs are visualized. The mean final training and testing accuracies of all runs are 0.65 and 0.66, respectively. The maximum final training and testing accuracies of all runs are 0.74 and 0.74, respectively. A summary can be seen in Table~\ref{tab:aig_accuracies}. A higher initial training accuracy does not necessarily mean a higher final accuracy. A visualization of the pruned best AIG found can be seen in Appendix~\ref{app:aig-mnist}.
 
 \begin{figure}[!htb]
     \centering
@@ -189,6 +189,31 @@ We again use the Binary-MNIST dataset. We use the AIG format and library \enquot
   \end{minipage}
   \caption{Results (training accuracies) of greedy local search according to Algorithm~\ref{alg:aig_local_search} on AIGs. We performed 38 experiments, 10 of which are visualized here. The initial training accuracies vary from 0.61 to 0.61. A higher initial training accuracy does not necessarily mean a higher final accuracy. Best of all runs was 0.77.}
 \label{fig:aig_exp_result}
+\end{figure}
+\FloatBarrier
+
+\begin{table}[!htb]
+  \centering
+\begin{tabular}{lll}
+                      & Train & Test \\ \hline
+Mean initial accuracy & 0.54  & 0.55 \\
+Min initial accuracy  & 0.51  & 0.51 \\
+Max initial accuracy  & 0.64  & 0.66 \\
+Mean final accuracy   & 0.65  & 0.66 \\
+Min final accuracy    & 0.51  & 0.51 \\
+Max final accuracy    & 0.74  & 0.74
+\end{tabular}
+\caption{Statistics over initial and final training and test accuracies out of the 42 runs in which we performed an AIG local serach.}
+\label{tab:aig_accuracies}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \resizebox {.8\textwidth} {!} {
+    \includestandalone[]{standalone/aig/best_aig_pruned}
+  }
+  \caption{Best AIG found using a greedy local search. Due to a bug in our code, node 1734 takes two identical inputs which is normally not permitted. Nevertheless, it has a testing accuracy of 0.745, just a little over the second best AIG with a testing accuracy of 0.742. It is interesting that an AIG this small still generalizes, albeit with low accuracy.}
+  \label{fig:best_aig}
 \end{figure}
 \FloatBarrier
 

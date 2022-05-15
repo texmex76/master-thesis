@@ -19,15 +19,15 @@ For random guess, we just take into account the random seed. If we use a 32-bit 
 
 The size of the AIG we computed by passing a text-based aag-file to the program \enquote{aigtoaig} from the software AIGER. The output file is an AIG in binary and we read off its size. We have to keep in mind that the binary AIG file we obtain might even be too big and could be implemented smaller.
 
-\subsection{Best AIG found} \label{app:aig-mnist}
-Figure~\ref{fig:aig-mnist} visualizes the best AIG in terms of testing accuracy on Binary-MNIST that was found using local greedy search. For its testing accuracy of ??\% that is significantly above chance, it is surprisingly small.
+\subsection{Second best AIG found} \label{app:aig-mnist}
+The best AIG found is visualized in Figure~\ref{fig:best_aig}, but due to a bug in our code, an AND node takes two identital inputs, which is normally not allowed, hence we visualizes the second best AIG in Figure~\ref{fig:aig-mnist}. The testing accuracy of this AIG is 74.2\% on Binary-MNIST.
 
 \begin{figure}[!htb]
     \centering
     \resizebox {0.45\textwidth} {!} {
-      \includestandalone[angle=90]{standalone/aig/aig-mnist}
+      \includestandalone[angle=90]{standalone/aig/second_best_aig_pruned}
     }
-      \caption{AIG that was found using greedy local search with ??\% testing accuracy on Binary-MNIST.}
+      \caption{AIG that was found using greedy local search with 74.2\% testing accuracy on Binary-MNIST.}
 \label{fig:aig-mnist}
 \end{figure}
 \FloatBarrier

@@ -19,8 +19,8 @@ For random guess, we just take into account the random seed. If we use a 32-bit 
 
 The size of the AIG we computed by passing a text-based aag-file to the program \enquote{aigtoaig} from the software AIGER. The output file is an AIG in binary and we read off its size. We have to keep in mind that the binary AIG file we obtain might even be too big and could be implemented smaller.
 
-\subsection{Second best AIG found} \label{app:aig-mnist}
-The best AIG found is visualized in Figure~\ref{fig:best_aig}, but due to a bug in our code, an AND node takes two identital inputs, which is normally not allowed, hence we visualizes the second best AIG in Figure~\ref{fig:aig-mnist}. The testing accuracy of this AIG is 74.2\% on Binary-MNIST.
+\subsection{Best valid AIG found} \label{app:aig}
+The best AIG found is visualized in Figure~\ref{fig:best_aig}, but due to a bug in our code, an AND node takes two identital inputs, which is normally not allowed, hence we visualizes the best valid AIG in Figure~\ref{fig:aig-mnist}. The testing accuracy of this AIG is 74.2\% on Binary-MNIST.
 
 \begin{figure}[!htb]
     \centering
